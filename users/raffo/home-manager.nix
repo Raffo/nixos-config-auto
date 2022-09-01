@@ -14,6 +14,7 @@ let sources = import ../../nix/sources.nix; in {
     pkgs.jq
     pkgs.tree
     pkgs.watch
+    pkgs.vim
 
     pkgs.go
     pkgs.gopls
@@ -31,6 +32,15 @@ let sources = import ../../nix/sources.nix; in {
     PAGER = "less -FirSwX";
     MANPAGER = "sh -c 'col -bx | ${pkgs.bat}/bin/bat -l man -p'";
   };
+
+  home.file.".zshrc".recursive = true;
+  home.file.".zshrc".source = pkgs.fetchFromGitHub {
+    owner = "Raffo";
+    repo = "dotfiles";
+    rev = "main";
+    sha256 = "AT9StpiePrFQcGEzI7ZI9mFzoNZPJfx6DV19kVcCiEo=";
+  } + "/.zshrc";
+
 
   #---------------------------------------------------------------------
   # Programs
