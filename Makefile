@@ -1,13 +1,13 @@
 # Connectivity info for Linux VM
 NIXADDR ?= unset
 NIXPORT ?= 22
-NIXUSER ?= mitchellh
+NIXUSER ?= raffo
 
 # Get the path to this Makefile and directory
 MAKEFILE_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
 # The name of the nixosConfiguration in the flake
-NIXNAME ?= vm-intel
+NIXNAME ?= vm-aarch64-utm
 
 # SSH options that are used. These aren't meant to be overridden but are
 # reused a lot so we just store them up here.
@@ -56,10 +56,10 @@ vm/bootstrap0:
 
 # after bootstrap0, run this to finalize. After this, do everything else
 # in the VM unless secrets change.
+# $(MAKE) vm/secrets -- I skipped this part
 vm/bootstrap:
 	NIXUSER=root $(MAKE) vm/copy
 	NIXUSER=root $(MAKE) vm/switch
-	$(MAKE) vm/secrets
 	ssh $(SSH_OPTIONS) -p$(NIXPORT) $(NIXUSER)@$(NIXADDR) " \
 		sudo reboot; \
 	"
@@ -92,7 +92,7 @@ vm/copy:
 # have to run vm/copy before.
 vm/switch:
 	ssh $(SSH_OPTIONS) -p$(NIXPORT) $(NIXUSER)@$(NIXADDR) " \
-		sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake \"/nix-config#${NIXNAME}\" \
+		sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake \"/nix-config#${NIXNAME}\"  --show-trace \
 	"
 
 # Build an ISO image
